@@ -1,0 +1,101 @@
+module extraction.Pervasive
+
+prelude "let iteri = fun n f st -> let st = ref st in let i = ref Z.zero in while (Z.lt !i n) do st := f !i !st ; i := Z.add !i Z.one done ; !st"
+
+syntax val tt "()"
+syntax type distr "%1"
+syntax val logical_equality "%1 = %2"
+syntax val iteri "iteri"
+
+end
+
+module extraction.Logic
+
+syntax val witness "(Obj.magic None)"
+
+end
+
+module extraction.Utils
+
+prelude "let p5 = ref Z.zero (* FILL ME! *)\n"
+prelude "let p4 = ref Z.zero (* FILL ME! *)"
+prelude "let p3 = ref Z.zero (* FILL ME! *)"
+prelude "let p2 = ref Z.zero (* FILL ME! *)"
+prelude "let p1 = ref Z.zero (* FILL ME! *)"
+
+syntax val p1 "!p1"
+syntax val p2 "!p2"
+syntax val p3 "!p3"
+syntax val p4 "!p4"
+syntax val p5 "!p5"
+
+end
+
+module extraction.PrimeField
+
+prelude "let fmul = fun a b -> Z.erem (Z.mul a b) !q\n"
+prelude "let fadd = fun a b -> Z.erem (Z.add a b) !q"
+prelude "let fumin = fun a -> Z.erem (Z.neg a) !q"
+prelude "let finv = fun a -> Z.erem (Z.neg a) !q"
+prelude "let fsub = fun a b -> Z.erem (Z.sub a b) !q"
+prelude "let fdiv = fun a b -> Z.erem (Z.mul a (Z.invert b !q)) !q"
+prelude "let fexp = fun a b -> Z.powm a b !q"
+
+prelude "let dt : unit -> Z.t = fun _ -> Z.rem (Z.of_bits (Cryptokit.Random.string Cryptokit.Random.secure_rng 128)) !q\n"
+
+prelude "let q = ref Z.one (* FILL ME! *)\n"
+
+
+syntax val q "!q"
+syntax type t "Z.t"
+syntax val fzero "Z.zero"
+syntax val fone "Z.one"
+syntax val fmul "fmul"
+syntax val fadd "fadd"
+syntax val fumin "fumin"
+syntax val finv "finv"
+syntax val fsub "fsub"
+syntax val fdiv "fdiv"
+syntax val fexp "fexp"
+
+
+end
+
+module extraction.CyclicGroup
+
+prelude "let cgmul = fun a b -> Z.erem (Z.mul a b) !p\n"
+prelude "let cginv = fun a -> Z.erem (Z.neg a) !q"
+prelude "let cgdiv = fun a b -> Z.erem (Z.mul a (Z.invert b !p)) !p"
+prelude "let cgexp = fun a b -> Z.powm a b !p"
+
+prelude "let g = ref Z.one (* FILL ME! *)\n"
+prelude "let p = ref Z.one (* FILL ME! *)\n"
+
+syntax type group "Z.t"
+syntax val g "!g"
+syntax val cgmul "cgmul"
+syntax val cginv "cginv"
+syntax val cgdiv "cgdiv"
+syntax val cgexp "cgexp"
+
+end
+
+module extraction.ECList
+
+syntax val iota_ "iota_ = fun i j -> let st = ref [] in for i = i to j do st := Cons (i, !st) done ; !st"
+
+end
+
+module extraction.FieldPolynomial
+
+syntax val dpolynomial "let rec dpolynomial' (i : Z.t) (d : Z.t) (p : monomial list) : monomial list = if Z.gt i d then p else let coef = dt () in if coef = Z.zero then dpolynomial' i d p else dpolynomial' (Z.add i Z.one) d (Cons ({ coef = coef ; expo = i}, p)) in dpolynomial' Z.zero %1 Nil"
+
+end
+
+module extraction.Pedersen
+
+prelude "let h = let x = dt () in cgexp !g x\n"
+
+syntax val h "h"
+
+end
