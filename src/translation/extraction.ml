@@ -11,6 +11,7 @@ let ec_words = [
     ("::", "Cons") ;
     ("=", "logical_equality") ;
     ("/\\", "boolean_and") ;
+    ("&&", "boolean_and") ;
     ("\\/", "boolean_or") ;
     ("*", "( * )") ;
     ("+", "( + )") ;

@@ -16,7 +16,7 @@ open EcLocation
 
 open Dependencies
 
-let easycrypt_path = ref "/usr/local/lib/easycrypt"
+let easycrypt_path = ref "/Users/vm2p/.opam/default/lib/easycrypt"
 let easycrypt_options = ref []
 
 (* ================================================================== *)
@@ -24,7 +24,7 @@ let easycrypt_options = ref []
 let options =
   Arg.(align
          [
-           ("-easycrypt_path",
+           ("-lib",
             String (fun s -> easycrypt_path := s),
             " sets the path for easycrypt (default is /usr/local/lib/easycrypt)");
            ("-ec",
@@ -103,7 +103,7 @@ let mk_dummy_loc x =
   { pl_loc = _dummy ; pl_desc = x; }
 
 let pervasive =
-  "module Pervasive\n\nuse int.Int\nuse real.Real\n\nval function tt : unit\n\ntype distr 'a\n\nlet boolean_and (b : bool) (b' : bool) : bool = b && b'\n\nlet boolean_or (b : bool) (b' : bool) : bool = b || b'\n\nlet boolean_not (b : bool) : bool = not b\n\nval function logical_equality (x : 'a) (y : 'a) : bool\n\tensures { result <-> x = y }\n\nlet b2i (b : bool) : int = if b then 1 else 0\n\nval function iteri : int -> (int -> 'a -> 'a) -> 'a -> 'a\n\nlet iter (n : int) (f : 'a -> 'a) (x0 : 'a) : 'a = iteri n (fun i -> f) x0\n\nend\n\n"
+  "module Pervasive\n\nuse int.Int\nuse real.Real\n\nval function tt : unit\n\ntype distr 'a\n\nlet boolean_and (b : bool) (b' : bool) : bool = b && b'\n\nlet boolean_or (b : bool) (b' : bool) : bool = b || b'\n\nlet boolean_not (b : bool) : bool = not b\n\nval function logical_equality (x : 'a) (y : 'a) : bool\n\tensures { result <-> x = y }\n\nlet b2i (b : bool) : int = if b then 1 else 0\n\nval function iteri : int -> (int -> 'a -> 'a) -> 'a -> 'a\n\nlet iter (n : int) (f : 'a -> 'a) (x0 : 'a) : 'a = iteri n (fun i -> f) x0\n\nval function witness : 'a\n\nlet max (a : int) (b : int) = if (a < b) then b else a\n\nend\n\n"
 
 let rec get_imports f = function
   | [] -> ["int.Int"; "real.Real"]
@@ -112,6 +112,18 @@ let rec get_imports f = function
      else get_imports f deps @ [fst dep]
                                       
 let main file =
+  (* Get ignore files *)
+  Format.printf "size no_extraction %d@." (List.length !no_extraction) ;
+
+  let ic = open_in "no_extract.config" in
+  let line = try input_line ic with e -> close_in_noerr ic; raise e in
+  close_in ic ;
+  Format.printf "line %s@." line ;
+  set_no_extraction (String.split_on_char ',' line) ;
+  set_no_imports (String.split_on_char ',' line) ;
+
+  Format.printf "size no_extraction %d@." (List.length !no_extraction) ;
+  
   parses_file file ;
   let myname  = Filename.basename Sys.executable_name
   and mydir   = Filename.dirname  Sys.executable_name in
@@ -181,7 +193,7 @@ let main file =
   let p = Filter_predicate.filter_global_list (parseall (from_file !ifile)) in
 
   let ec_prelude = [Filename.concat (Filename.concat theories_path "prelude") "Logic.ec"] in
-
+      
   let t1 = Sys.time () in
   let tlp = (t1 -. t0) *. 1000. in
 

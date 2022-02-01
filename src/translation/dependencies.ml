@@ -3,6 +3,18 @@ open List
 open EcParsetree
 open EcLocation
 
+let no_extract_headers = ["AllCore"; "Core"; "Int" ; "Real"; "Monoid"; "FinType"; "Bigop"; "Bool"; "IntMin";
+                          "IntDiv"; "Finite"; "Ring"; "StdRing"; "Number"; "StdOrder"; "Bigalg"; "StdBigop"; "RealSeq";
+                          "RealLub"; "Discrete"; "RealSeries"; "Binomial"; "Distr"; "AlgTactic"; "Tactics"; "DBool"]
+let no_extraction = ref []
+let set_no_extraction libs = no_extraction := no_extract_headers @ libs
+(* ================================================================== *)
+let no_imports_headers = ["Core"; "Monoid"; "FinType"; "Bigop"; "Bool"; "IntMin";
+                          "IntDiv"; "Finite"; "Ring"; "StdRing"; "Number"; "StdOrder"; "Bigalg"; "StdBigop"; "RealSeq";
+                          "RealLub"; "Discrete"; "RealSeries"; "Binomial"; "Distr"; "AlgTactic"; "Tactics"; "DBool"]
+let no_imports = ref []
+let set_no_imports libs = no_imports := no_imports_headers @ libs
+               
 (* ================================================================== *)
 (** EasyCrypt constructors *)
 let ec_words = [
@@ -34,30 +46,10 @@ let rec get_dependencies_global_list' = function
   | g :: gs -> get_dependencies_global g @ get_dependencies_global_list' gs
 
 (* ================================================================== *)
-(** Extraction of EasyCrypt script *)
-let no_extraction = ["AllCore"; "Core"; "Int" ; "Real"; "Monoid"; "FinType"; "Bigop"; "Bool"; "IntMin";
-                     "IntDiv"; "Finite"; "Ring"; "StdRing"; "Number"; "StdOrder"; "Bigalg"; "StdBigop"; "RealSeq";
-                     "RealLub"; "Discrete"; "RealSeries"; "Binomial"; "Distr"; "AlgTactic"; "Tactics"; "DBool";
-
-                     "AGate"; "AFunctionality"; "AArithmeticGate"; "ArithmeticFunctionality"; "Privacy"; "ASecretSharingScheme";
-                     "ScalarMultiplicationFunctionality"; "AINDGate"; "INDFunctionality"; "INDSecurity"; "SecretSharingSchemeSecurity";
-                     "AProtocol" ; "AZKFunctionality"; "ATwoPartyProtocol" ; "AZKProof"; "Completeness"; "Soundness" ; "HVZeroKnowledge";
-                     "DiscreteLogAssumption"; "ACommitmentScheme"; "CommitmentBinding"; "CommitmentHiding"; 
-                     "MultiplicationFunctionality"; "AdditionFunctionality"; "ACircuit"; "AProtocolFunctionality"]
-             
+(** Extraction of EasyCrypt script *)             
 let rec get_dependencies_global_list gs =
   let deps = get_dependencies_global_list' gs in
-  List.filter (fun dep -> not (mem dep no_extraction)) deps
-
-let no_imports = ["Core"; "Monoid"; "FinType"; "Bigop"; "Bool"; "IntMin";
-                  "IntDiv"; "Finite"; "Ring"; "StdRing"; "Number"; "StdOrder"; "Bigalg"; "StdBigop"; "RealSeq";
-                  "RealLub"; "Discrete"; "RealSeries"; "Binomial"; "Distr"; "AlgTactic"; "Tactics"; "DBool";
-                  
-                  "AGate"; "AFunctionality"; "AArithmeticGate"; "ArithmeticFunctionality"; "Privacy"; "ASecretSharingScheme";
-                     "ScalarMultiplicationFunctionality"; "AINDGate"; "INDFunctionality"; "INDSecurity"; "SecretSharingSchemeSecurity";
-                     "AProtocol" ; "AZKFunctionality"; "ATwoPartyProtocol" ; "AZKProof"; "Completeness"; "Soundness" ; "HVZeroKnowledge";
-                     "DiscreteLogAssumption"; "ACommitmentScheme"; "CommitmentBinding"; "CommitmentHiding"; 
-                     "MultiplicationFunctionality"; "AdditionFunctionality"; "ACircuit"; "AProtocolFunctionality"]
+  List.filter (fun dep -> not (mem dep !no_extraction)) deps
 
 let rec replacements = function
   | [] -> []
@@ -69,4 +61,4 @@ let rec replacements = function
 let rec get_imports_global_list gs =
   let deps = get_dependencies_global_list' gs in
   let deps = replacements deps in
-  List.filter (fun dep -> not (mem dep no_imports)) deps
+  List.filter (fun dep -> not (mem dep !no_imports)) deps
