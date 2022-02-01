@@ -68,7 +68,7 @@ and whyml_pty_r = function
   | PTtuple  ptys -> "(" ^ whyml_pty_list ptys ", " ^ ")"
   | PTnamed  pqsy -> whyml_pqsymbol pqsy
   | PTvar    psy -> whyml_psymbol psy
-  | PTapp    (pqsy, ptys) -> whyml_pqsymbol pqsy ^ " " ^ whyml_pty_list ptys " "
+  | PTapp    (pqsy, ptys) -> whyml_pqsymbol pqsy ^ " (" ^ whyml_pty_list ptys ") " ^ ")"
   | PTfun    (pty1, pty2) -> "(" ^ whyml_pty pty1 ^ ") -> " ^ whyml_pty pty2
   | PTglob   _ -> "glob"
 
@@ -252,6 +252,8 @@ let whyml_global_action = function
   | Gtype ptydecls -> whyml_ptydecl_list ptydecls "\n" ^ "\n\n"
   | Goperator pop -> whyml_poperator pop ^ "\n\n"
   | Gabbrev pabbrev -> whyml_pabbrev pabbrev ^ "\n\n"
+  (*| GthOpen (il, b, psy) -> "scope " ^ whyml_psymbol psy ^ "\n\n"
+  | GthClose (thcl, psy) -> "end\n\n"*)
   | _ -> ""
    
 let whyml_global g = whyml_global_action (unloc g.gl_action)
