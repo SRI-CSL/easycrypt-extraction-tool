@@ -1,0 +1,8 @@
+(executable
+ (name ecwhy3)
+ (libraries containers easycrypt.core)
+ (modules Dependencies Filter_predicate Extraction Ecwhy3)
+ (promote (until-clean) (into ".."))
+)
+
+(env (dev (flags (:standard -warn-error -A -rectypes))))

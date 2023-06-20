@@ -1,19 +1,27 @@
-printer "ocaml"
 
 module extraction.Pervasive
 
 prelude "let iteri = fun n f st -> let st = ref st in let i = ref Z.zero in while (Z.lt !i n) do st := f !i !st ; i := Z.add !i Z.one done ; !st\n"
 prelude "let logical_equality = fun x y -> x = y\n"
+prelude "let witness = Obj.magic None\n"
 
 syntax val tt "()"
 syntax type distr "%1"
-syntax val logical_equality "%1 = %2"
+syntax val logical_equality "logical_equality"
 syntax val iteri "iteri"
 syntax val witness "(Obj.magic None)"
 
 end
 
+module extraction.List
+
+syntax val iota_ "fun i j -> let st = ref Nil in let k = ref i in while (Z.lt !k j) do st := Cons (!k, !st) ; k := Z.add !k Z.one ; done ; !st"
+
+end
+
 module extraction.PrimeField
+
+prelude "let q = ref Z.one (* FILL ME! *)\n"
 
 prelude "let fmul = fun a b -> Z.erem (Z.mul a b) !q\n"
 prelude "let fadd = fun a b -> Z.erem (Z.add a b) !q\n"
@@ -23,9 +31,11 @@ prelude "let fsub = fun a b -> Z.erem (Z.sub a b) !q\n"
 prelude "let fdiv = fun a b -> Z.erem (Z.mul a (Z.invert b !q)) !q\n"
 prelude "let fexp = fun a b -> Z.powm a b !q\n"
 
-prelude "let dt : unit -> Z.t = fun _ -> Z.rem (Z.of_bits (Cryptokit.Random.string Cryptokit.Random.secure_rng 128)) !q\n"
+prelude "let ofint = fun x -> Z.erem (Z.of_int x) !q\n"
+prelude "let toint = fun x -> Z.to_int x\n"
 
-prelude "let q = ref Z.one (* FILL ME! *)\n"
+
+prelude "let dt : unit -> Z.t = fun _ -> Z.rem (Z.of_bits (Cryptokit.Random.string Cryptokit.Random.secure_rng 128)) !q\n"
 
 syntax val q "!q"
 syntax type t "Z.t"
@@ -38,6 +48,9 @@ syntax val finv "finv"
 syntax val fsub "fsub"
 syntax val fdiv "fdiv"
 syntax val fexp "fexp"
+syntax val ofint "ofint"
+syntax val toint "toint"
+syntax val dt "dt"
 
 
 end

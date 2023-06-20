@@ -24,25 +24,9 @@ OCAMLBUILD := $(OCAMLBUILD_BIN) $(OCAMLBUILD_OPTS)
 all: build
 	@true
 
-build: native
-
-define do-build
-	rm -f "$(1)$(EXE)"
-	$(OCAMLBUILD) "src/$(1)"
-	if [ ! -z "$(EXE)" ]; then \
-	  cp "_build/src/$(1)" "$(1)$(EXE)"; \
-	fi
-endef
-
-native:
-	$(call do-build,ecwhy3.native)
-
-wrapper:
-	$(call do-build,zkRun.native)
+build: 
+	dune build
 
 clean:
-	$(OCAMLBUILD) -clean
-	rm -f ecwhy3.native zkRun.native extraction.mlw InTheHead.ml
-
-ast:
-	$(call do-build,tree/ecAst.native)
+	dune clean
+	rm -f ecwhy3.native extraction.mlw

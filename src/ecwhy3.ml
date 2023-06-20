@@ -10,11 +10,12 @@ open Format
 open Lexing
 open List
 open String
-   
-open EcIo
-open EcLocation
 
 open Dependencies
+
+open Core
+open EcIo
+open EcLocation
 
 let easycrypt_path = ref "/Users/vm2p/.opam/default/lib/easycrypt"
 let easycrypt_options = ref []

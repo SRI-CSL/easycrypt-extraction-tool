@@ -1,5 +1,6 @@
 open List
 
+open Core
 open EcParsetree
 open EcLocation
 open EcBigInt

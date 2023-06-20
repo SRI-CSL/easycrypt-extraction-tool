@@ -1,0 +1,27 @@
+opam-version: "2.0"
+name: "ec-why3"
+synopsis: "ec-why3"
+description: "ec-why3"
+maintainer: "FooBar"
+authors: "FooBar"
+depends: [
+  "dune" {>= "2.8"}
+  "ocaml" {< "5.0.0"}
+  "batteries" {>= "3"}
+  "camlp-streams" {>= "5"}
+  "camlzip"
+  "dune-build-info"
+  "dune-site"
+  "ocaml-inifiles" {>= "1.2"}
+  "pcre" {>= "7"}
+  "why3" {>= "1.5.0" & < "1.6"}
+  "yojson"
+  "zarith" {>= "1.10"}
+  "odoc" {with-doc}
+]
+build: [
+    "dune" "build"
+]
+remove: [
+  "ocamlfind" "remove" "ec-why3"
+]
