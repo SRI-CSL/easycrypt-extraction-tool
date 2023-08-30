@@ -9,48 +9,73 @@ syntax val tt "()"
 syntax type distr "%1"
 syntax val logical_equality "logical_equality"
 syntax val iteri "iteri"
-syntax val witness "(Obj.magic None)"
+syntax val witness "witness"
 
 end
 
-module extraction.List
+module extraction.AGroup
 
-syntax val iota_ "fun i j -> let st = ref Nil in let k = ref i in while (Z.lt !k j) do st := Cons (!k, !st) ; k := Z.add !k Z.one ; done ; !st"
+prelude "let n = ref Z.one (* FILL ME! *)\n"
+
+prelude "let agadd = fun a b -> Z.erem (Z.add a b) !n\n"
+prelude "let agumin = fun a -> Z.erem (Z.neg a) !n\n"
+prelude "let agsub = fun a b -> Z.erem (Z.sub a b) !n\n"
+prelude "let atoint = fun a -> a\n"
+prelude "let aofint = fun a -> Z.erem a !n\n"
+
+syntax val n "!n"
+syntax type agroup "Z.t"
+syntax val ( + ) "agadd %1 %2"
+syntax val zero "Z.zero"
+syntax val ( -_ ) "agumin %1"
+syntax val ( - ) "agsub %1 %2"
+syntax val atoint "atoint"
+syntax val aofint "aofint"
 
 end
 
-module extraction.PrimeField
+module extraction.MGroup
 
-prelude "let q = ref Z.one (* FILL ME! *)\n"
+prelude "let order = ref Z.one (* FILL ME! *)\n"
 
-prelude "let fmul = fun a b -> Z.erem (Z.mul a b) !q\n"
-prelude "let fadd = fun a b -> Z.erem (Z.add a b) !q\n"
-prelude "let fumin = fun a -> Z.erem (Z.neg a) !q\n"
-prelude "let finv = fun a -> Z.erem (Z.neg a) !q\n"
-prelude "let fsub = fun a b -> Z.erem (Z.sub a b) !q\n"
-prelude "let fdiv = fun a b -> Z.erem (Z.mul a (Z.invert b !q)) !q\n"
-prelude "let fexp = fun a b -> Z.powm a b !q\n"
+prelude "let mgmul = fun a b -> Z.erem (Z.mul a b) !n\n"
+prelude "let mginv = fun a -> (Z.invert a !n)\n"
+prelude "let mgdiv = fun a b -> Z.erem (Z.div a b) !n\n"
+prelude "let mgpow = fun a b -> Z.powm a b !n\n"
+prelude "let mtoint = fun a -> a\n"
+prelude "let mofint = fun a -> Z.erem a !n\n"
 
-prelude "let ofint = fun x -> Z.erem (Z.of_int x) !q\n"
-prelude "let toint = fun x -> Z.to_int x\n"
+syntax type mgroup "Z.t"
+syntax val ( * ) "mgmul %1 %2"
+syntax val inv "mginv %1"
+syntax val ( / ) "mgdiv %1 %2"
+syntax val ( ^ ) "mgpow %1 %2"
+syntax val mtoint "mtoint"
+syntax val mofint "mofint"
 
+end
 
-prelude "let dt : unit -> Z.t = fun _ -> Z.rem (Z.of_bits (Cryptokit.Random.string Cryptokit.Random.secure_rng 128)) !q\n"
+module extraction.Composite
 
+prelude "let p = ref (Z.of_int 11) (* FILL ME! *)\n"
+prelude "let q = ref (Z.of_int 17) (* FILL ME! *)\n"
+
+prelude "let mn2gmul = fun a b -> Z.erem (Z.mul a b) (Z.pow !n 2)\n"
+prelude "let mn2ginv = fun a -> (Z.invert a (Z.pow !n 2))\n"
+prelude "let mn2gdiv = fun a b -> Z.erem (Z.div a b) (Z.pow !n 2)\n"
+prelude "let mn2gpow = fun a b -> Z.powm a b (Z.pow !n 2)\n"
+prelude "let mn2toint = fun a -> a\n"
+prelude "let mn2ofint = fun a -> Z.erem a (Z.pow !n 2)\n"
+
+syntax val p "!p"
 syntax val q "!q"
-syntax type t "Z.t"
-syntax val fzero "Z.zero"
-syntax val fone "Z.one"
-syntax val fmul "fmul"
-syntax val fadd "fadd"
-syntax val fumin "fumin"
-syntax val finv "finv"
-syntax val fsub "fsub"
-syntax val fdiv "fdiv"
-syntax val fexp "fexp"
-syntax val ofint "ofint"
-syntax val toint "toint"
-syntax val dt "dt"
 
+syntax type mn2_group "Z.t"
+syntax val ( * ) "mn2gmul %1 %2"
+syntax val inv "mn2ginv %1"
+syntax val ( / ) "mn2gdiv %1 %2"
+syntax val ( ^ ) "mn2gpow %1 %2"
+syntax val mn2toint "mn2toint"
+syntax val mn2ofint "mn2ofint"
 
 end

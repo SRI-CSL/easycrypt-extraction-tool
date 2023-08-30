@@ -11,7 +11,7 @@ let no_extraction = ref []
 let set_no_extraction libs = no_extraction := no_extract_headers @ libs
 (* ================================================================== *)
 let no_imports_headers = ["Core"; "Monoid"; "FinType"; "Bigop"; "Bool"; "IntMin";
-                          "IntDiv"; "Finite"; "Ring"; "StdRing"; "Number"; "StdOrder"; "Bigalg"; "StdBigop"; "RealSeq";
+                          "Finite"; "Ring"; "StdRing"; "Number"; "StdOrder"; "Bigalg"; "StdBigop"; "RealSeq";
                           "RealLub"; "Discrete"; "RealSeries"; "Binomial"; "Distr"; "AlgTactic"; "Tactics"; "DBool"]
 let no_imports = ref []
 let set_no_imports libs = no_imports := no_imports_headers @ libs

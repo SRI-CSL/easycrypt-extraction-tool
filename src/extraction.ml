@@ -11,6 +11,7 @@ let ec_words = [
     ("[]", "Nil") ;
     ("::", "Cons") ;
     ("=", "logical_equality") ;
+    ("<>", "logical_inequality") ;
     ("/\\", "boolean_and") ;
     ("&&", "boolean_and") ;
     ("\\/", "boolean_or") ;
@@ -26,6 +27,8 @@ let ec_words = [
     ("\\o", "fcomp") ;
     ("\\o2", "fcomp2") ;
     ("\\in", "membership") ;
+    ("_.[_<-_]", "([]<-)") ;
+    ("%/", "div") ;
   ]
 
 (* ================================================================== *)
@@ -263,14 +266,15 @@ let whyml_global g = whyml_global_action (unloc g.gl_action)
 (** Extraction of EasyCrypt script *)
 let imports_mapping = [
     ("Int", "int.Int") ;
+    ("IntDiv", "int.EuclideanDivision") ;
     ("Real", "real.Real") ;
   ]
                    
 let whyml_imports mod_name imports =
   if mod_name = "Logic" then
-    "use Pervasive\n" ^ String.concat "\n" (List.map (fun imp -> "use " ^ try assoc imp imports_mapping with | _ -> imp) imports)
+    "use Pervasive\n" ^ String.concat "\n" (List.map (fun imp -> Format.printf "imp = %s@." imp ; "use " ^ try assoc imp imports_mapping with | _ -> imp) imports)
   else 
-    "use Pervasive\nuse Logic\n" ^ String.concat "\n" (List.map (fun imp -> "use " ^ try assoc imp imports_mapping with | _ -> imp) imports)
+    "use Pervasive\nuse Logic\n" ^ String.concat "\n" (List.map (fun imp -> Format.printf "imp = %s@." imp ; "use " ^ try assoc imp imports_mapping with | _ -> imp) imports)
                
 let rec whyml_global_list mod_name imports gs sep =
   "module " ^ mod_name ^ "\n\n" ^ whyml_imports mod_name imports ^ "\n\n"^
